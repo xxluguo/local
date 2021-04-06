@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.BillMapper">
+    <resultMap id="billList" type="Bill">
+        <result property="id" column="id"/>
+        <result property="productName" column="productName"/>
+        <result property="providerId" column="providerId"/>
+        <result property="isPayment" column="isPayment"/>
+        <result property="billCode" column="billCode"/>
+        <result property="proName" column="proName"/>
+    </resultMap>
+    <select id="findBilldata" parameterType="Map" resultMap="billList">
+         select * from smbms_bill
+            where productName like CONCAT('%',#{bName},'%')
+    </select>
+    <select id="findAllBill" resultMap="billList">
+        select * from smbms_bill
+    </select>
+    <select id="findAllMyBill" resultMap="billList">
+        select smbms_bill.*,smbms_provider.proName from smbms_bill,smbms_provider where smbms_bill.providerid = smbms_provider.id
+    </select>
+    <select id="findBillWithId" parameterType="Bill" resultMap="billList">
+        select smbms_bill.*,smbms_provider.proName
+        from smbms_bill,smbms_provider
+        <where>
+            <if test="id!=null and id!=''">
+                and id = #{id}
+            </if>
+            <if test="isPayment!=null and isPayment!=''">
+                and isPayment = #{isPayment}
+            </if>
+            <if test="productName!=null and productName!=''">
+                and productName like CONCAT('%',#{productName},'%')
+            </if>
+        </where> and smbms_provider.id = smbms_bill.providerId
+    </select>
+</mapper>
